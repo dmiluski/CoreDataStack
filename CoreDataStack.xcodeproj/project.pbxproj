@@ -18,6 +18,10 @@
 		2E1873BA2728976100360A63 /* CoreDataStackUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1873B92728976100360A63 /* CoreDataStackUITestsLaunchTests.swift */; };
 		2E1873D327289F5000360A63 /* ContentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1873D227289F5000360A63 /* ContentDetailsView.swift */; };
 		2E5F075A272A0E6100E1671C /* RouteCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0759272A0E6100E1671C /* RouteCellView.swift */; };
+		2E5F075E272B580D00E1671C /* Anchorable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F075D272B580D00E1671C /* Anchorable.swift */; };
+		2E5F0761272B582000E1671C /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0760272B582000E1671C /* UIView+.swift */; };
+		2E5F0763272B582900E1671C /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0762272B582900E1671C /* UIViewController+.swift */; };
+		2E5F0766272B589D00E1671C /* SwiftUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0765272B589D00E1671C /* SwiftUICollectionViewCell.swift */; };
 		2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF688192728B9E2005DEF20 /* StopCellView.swift */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +57,10 @@
 		2E1873B92728976100360A63 /* CoreDataStackUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStackUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		2E1873D227289F5000360A63 /* ContentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDetailsView.swift; sourceTree = "<group>"; };
 		2E5F0759272A0E6100E1671C /* RouteCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCellView.swift; sourceTree = "<group>"; };
+		2E5F075D272B580D00E1671C /* Anchorable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Anchorable.swift; sourceTree = "<group>"; };
+		2E5F0760272B582000E1671C /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
+		2E5F0762272B582900E1671C /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
+		2E5F0765272B589D00E1671C /* SwiftUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICollectionViewCell.swift; sourceTree = "<group>"; };
 		2EF688192728B9E2005DEF20 /* StopCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -104,6 +112,7 @@
 		2E1873962728975E00360A63 /* CoreDataStack */ = {
 			isa = PBXGroup;
 			children = (
+				2E5F075B272B57F400E1671C /* Common */,
 				2E1873972728975E00360A63 /* CoreDataStackApp.swift */,
 				2E1873992728975E00360A63 /* ContentView.swift */,
 				2E1873D227289F5000360A63 /* ContentDetailsView.swift */,
@@ -140,6 +149,41 @@
 				2E1873B92728976100360A63 /* CoreDataStackUITestsLaunchTests.swift */,
 			);
 			path = CoreDataStackUITests;
+			sourceTree = "<group>";
+		};
+		2E5F075B272B57F400E1671C /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				2E5F0764272B589000E1671C /* Cells */,
+				2E5F075F272B581700E1671C /* Extensions */,
+				2E5F075C272B580100E1671C /* Protocols */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		2E5F075C272B580100E1671C /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				2E5F075D272B580D00E1671C /* Anchorable.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		2E5F075F272B581700E1671C /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2E5F0760272B582000E1671C /* UIView+.swift */,
+				2E5F0762272B582900E1671C /* UIViewController+.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		2E5F0764272B589000E1671C /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				2E5F0765272B589D00E1671C /* SwiftUICollectionViewCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -273,10 +317,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E1873D327289F5000360A63 /* ContentDetailsView.swift in Sources */,
+				2E5F0766272B589D00E1671C /* SwiftUICollectionViewCell.swift in Sources */,
 				2E1873A12728976100360A63 /* Persistence.swift in Sources */,
+				2E5F0763272B582900E1671C /* UIViewController+.swift in Sources */,
+				2E5F075E272B580D00E1671C /* Anchorable.swift in Sources */,
 				2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */,
 				2E18739A2728975E00360A63 /* ContentView.swift in Sources */,
 				2E1873982728975E00360A63 /* CoreDataStackApp.swift in Sources */,
+				2E5F0761272B582000E1671C /* UIView+.swift in Sources */,
 				2E5F075A272A0E6100E1671C /* RouteCellView.swift in Sources */,
 				2E1873A42728976100360A63 /* CoreDataStack.xcdatamodeld in Sources */,
 			);
