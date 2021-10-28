@@ -14,8 +14,11 @@ struct ContentView: View {
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Route.timestamp, ascending: true)],
         animation: .default)
-
     private var items: FetchedResults<Route>
+
+    /// Modal Presentation of UIKit variation of interacting with this data
+    @State
+    var isPresenting: Bool = false
 
     var body: some View {
         NavigationView {
@@ -49,13 +52,19 @@ struct ContentView: View {
                 // Bottom Toolbar
                 ToolbarItemGroup(placement: .bottomBar) {
                     Spacer()
-                    Button(action: {}) {
-                        Label("Foo", systemImage: "plus")
+
+                    Button(action: {
+                        isPresenting.toggle()
+                    }) {
+                        Label("Present UIKit Variant", systemImage: "square.and.arrow.up")
                     }
                 }
                 ToolbarItem(placement: .bottomBar) {
 
                 }
+            }
+            .sheet(isPresented: $isPresenting) {
+                EmptyView()
             }
         }
     }

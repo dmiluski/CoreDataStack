@@ -113,11 +113,8 @@
 			isa = PBXGroup;
 			children = (
 				2E5F075B272B57F400E1671C /* Common */,
-				2E1873972728975E00360A63 /* CoreDataStackApp.swift */,
-				2E1873992728975E00360A63 /* ContentView.swift */,
-				2E1873D227289F5000360A63 /* ContentDetailsView.swift */,
-				2EF688192728B9E2005DEF20 /* StopCellView.swift */,
-				2E5F0759272A0E6100E1671C /* RouteCellView.swift */,
+				2E5F0768272B5A2700E1671C /* SwiftUI */,
+				2E5F0767272B5A2200E1671C /* UIKit */,
 				2E18739B2728976100360A63 /* Assets.xcassets */,
 				2E1873A02728976100360A63 /* Persistence.swift */,
 				2E1873A22728976100360A63 /* CoreDataStack.xcdatamodeld */,
@@ -184,6 +181,25 @@
 				2E5F0765272B589D00E1671C /* SwiftUICollectionViewCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		2E5F0767272B5A2200E1671C /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		2E5F0768272B5A2700E1671C /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				2E1873972728975E00360A63 /* CoreDataStackApp.swift */,
+				2E1873992728975E00360A63 /* ContentView.swift */,
+				2E1873D227289F5000360A63 /* ContentDetailsView.swift */,
+				2EF688192728B9E2005DEF20 /* StopCellView.swift */,
+				2E5F0759272A0E6100E1671C /* RouteCellView.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
