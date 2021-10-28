@@ -22,6 +22,8 @@
 		2E5F0761272B582000E1671C /* UIView+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0760272B582000E1671C /* UIView+.swift */; };
 		2E5F0763272B582900E1671C /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0762272B582900E1671C /* UIViewController+.swift */; };
 		2E5F0766272B589D00E1671C /* SwiftUICollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0765272B589D00E1671C /* SwiftUICollectionViewCell.swift */; };
+		2E5F076A272B5BDD00E1671C /* RouteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0769272B5BDD00E1671C /* RouteCell.swift */; };
+		2E5F076C272B5C6A00E1671C /* StopCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F076B272B5C6A00E1671C /* StopCell.swift */; };
 		2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF688192728B9E2005DEF20 /* StopCellView.swift */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +63,8 @@
 		2E5F0760272B582000E1671C /* UIView+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+.swift"; sourceTree = "<group>"; };
 		2E5F0762272B582900E1671C /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 		2E5F0765272B589D00E1671C /* SwiftUICollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUICollectionViewCell.swift; sourceTree = "<group>"; };
+		2E5F0769272B5BDD00E1671C /* RouteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCell.swift; sourceTree = "<group>"; };
+		2E5F076B272B5C6A00E1671C /* StopCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCell.swift; sourceTree = "<group>"; };
 		2EF688192728B9E2005DEF20 /* StopCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -186,6 +190,8 @@
 		2E5F0767272B5A2200E1671C /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				2E5F0769272B5BDD00E1671C /* RouteCell.swift */,
+				2E5F076B272B5C6A00E1671C /* StopCell.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -334,8 +340,10 @@
 			files = (
 				2E1873D327289F5000360A63 /* ContentDetailsView.swift in Sources */,
 				2E5F0766272B589D00E1671C /* SwiftUICollectionViewCell.swift in Sources */,
+				2E5F076A272B5BDD00E1671C /* RouteCell.swift in Sources */,
 				2E1873A12728976100360A63 /* Persistence.swift in Sources */,
 				2E5F0763272B582900E1671C /* UIViewController+.swift in Sources */,
+				2E5F076C272B5C6A00E1671C /* StopCell.swift in Sources */,
 				2E5F075E272B580D00E1671C /* Anchorable.swift in Sources */,
 				2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */,
 				2E18739A2728975E00360A63 /* ContentView.swift in Sources */,
