@@ -30,18 +30,31 @@ struct ContentView: View {
                 .onDelete(perform: deleteItems)
             }
             .toolbar {
+
+                // Nav Bar
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: loadRemoteRoutes) {
                         Image(systemName: "arrow.clockwise")
                     }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+
                     Button(action: addItem) {
                         Label("Add Item", systemImage: "plus")
                     }
+                    EditButton()
+                }
+
+                // Bottom Toolbar
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Spacer()
+                    Button(action: {}) {
+                        Label("Foo", systemImage: "plus")
+                    }
+                }
+                ToolbarItem(placement: .bottomBar) {
+
                 }
             }
         }
