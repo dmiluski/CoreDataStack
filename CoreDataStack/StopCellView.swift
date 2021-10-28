@@ -9,22 +9,22 @@ import SwiftUI
 
 struct StopCellView: View {
 
-    struct ViewModel {
-        let index: Int
-        let stop: Stop
-    }
-    let viewModel: ViewModel
+    let index: Int
+
+    @ObservedObject
+    var stop: Stop
 
     var body: some View {
         HStack {
 
-            Text("\(viewModel.index).")
+            Text("\(index).")
                 .frame(width: 24)
+                .animation(nil)
 
             VStack(alignment: .leading) {
-                Text(viewModel.stop.street?.prefix(10) ?? "")
+                Text(stop.street?.prefix(10) ?? "")
 
-                Text(viewModel.stop.city?.prefix(10) ?? "")
+                Text(stop.city?.prefix(10) ?? "")
                     .foregroundColor(.secondary)
             }
         }

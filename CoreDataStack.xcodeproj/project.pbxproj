@@ -17,6 +17,7 @@
 		2E1873B82728976100360A63 /* CoreDataStackUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1873B72728976100360A63 /* CoreDataStackUITests.swift */; };
 		2E1873BA2728976100360A63 /* CoreDataStackUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1873B92728976100360A63 /* CoreDataStackUITestsLaunchTests.swift */; };
 		2E1873D327289F5000360A63 /* ContentDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1873D227289F5000360A63 /* ContentDetailsView.swift */; };
+		2E5F075A272A0E6100E1671C /* RouteCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0759272A0E6100E1671C /* RouteCellView.swift */; };
 		2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF688192728B9E2005DEF20 /* StopCellView.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		2E1873B72728976100360A63 /* CoreDataStackUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStackUITests.swift; sourceTree = "<group>"; };
 		2E1873B92728976100360A63 /* CoreDataStackUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStackUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		2E1873D227289F5000360A63 /* ContentDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDetailsView.swift; sourceTree = "<group>"; };
+		2E5F0759272A0E6100E1671C /* RouteCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCellView.swift; sourceTree = "<group>"; };
 		2EF688192728B9E2005DEF20 /* StopCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +108,7 @@
 				2E1873992728975E00360A63 /* ContentView.swift */,
 				2E1873D227289F5000360A63 /* ContentDetailsView.swift */,
 				2EF688192728B9E2005DEF20 /* StopCellView.swift */,
+				2E5F0759272A0E6100E1671C /* RouteCellView.swift */,
 				2E18739B2728976100360A63 /* Assets.xcassets */,
 				2E1873A02728976100360A63 /* Persistence.swift */,
 				2E1873A22728976100360A63 /* CoreDataStack.xcdatamodeld */,
@@ -274,6 +277,7 @@
 				2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */,
 				2E18739A2728975E00360A63 /* ContentView.swift in Sources */,
 				2E1873982728975E00360A63 /* CoreDataStackApp.swift in Sources */,
+				2E5F075A272A0E6100E1671C /* RouteCellView.swift in Sources */,
 				2E1873A42728976100360A63 /* CoreDataStack.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

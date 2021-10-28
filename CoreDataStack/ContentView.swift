@@ -22,23 +22,19 @@ struct ContentView: View {
             List {
                 ForEach(items) { route in
                     NavigationLink {
-                        ContentDetailsView(
-                            items: FetchRequest(
-                                entity: Stop.entity(),
-                                sortDescriptors: [
-                                ],
-                                predicate: NSPredicate(format: "parent == %@", route),
-                                animation: .default
-                            ),
-                            route: route
-                        )
+                        ContentDetailsView(route: route)
                     } label: {
-                        Text(route.timestamp!, formatter: itemFormatter)
+                        RouteCellView(route: route)
                     }
                 }
                 .onDelete(perform: deleteItems)
             }
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: loadRemoteRoutes) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
                 }
@@ -53,10 +49,41 @@ struct ContentView: View {
 
     // MARK: - Actions
 
+    private func loadRemoteRoutes() {
+
+        // TODO: - Perform Async Remote Loading
+        DispatchQueue
+            .global()
+            .asyncAfter(deadline: .now() + 2) {
+
+                let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                context.parent = viewContext
+
+                guard let lastRoute = items.last else {
+                    return
+                }
+
+                let route = context.object(with: lastRoute.objectID)
+
+                context.delete(route)
+
+                do {
+                    try context.save()
+
+                    // Save to disk
+                    DispatchQueue.main.async(execute: trySave)
+                } catch {
+                    print("Dane - error: \(error)")
+                }
+
+            }
+    }
+
     private func addItem() {
         withAnimation {
             let newItem = Route(context: viewContext)
             newItem.timestamp = Date()
+            newItem.name = String(UUID().uuidString.prefix(5))
             trySave()
         }
     }
@@ -79,13 +106,6 @@ struct ContentView: View {
         }
     }
 }
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
