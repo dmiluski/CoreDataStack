@@ -42,6 +42,7 @@ open class SwiftUICollectionViewCell<Content>: UICollectionViewListCell where Co
                 in: contentView,
                 relativeTo: relativeTo
             )
+            hostController.view.backgroundColor = .clear
             hostingController = hostController
         }
     }

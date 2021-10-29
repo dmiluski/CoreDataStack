@@ -12,13 +12,16 @@ struct RouteCellView: View {
     let route: Route
 
     var body: some View {
-        VStack(alignment: .leading) {
-            if let name = route.name {
-                Text(name)
-            }
+        HStack {
+            VStack(alignment: .leading) {
+                if let name = route.name {
+                    Text(name)
+                }
 
-            Text(route.timestamp!, formatter: itemFormatter)
-                .foregroundColor(.secondary)
+                Text(route.timestamp!, formatter: itemFormatter)
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
         }
     }
 }

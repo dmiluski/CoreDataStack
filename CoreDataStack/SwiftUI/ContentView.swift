@@ -32,6 +32,7 @@ struct ContentView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
+            .navigationTitle(Text("Routes"))
             .toolbar {
 
                 // Nav Bar
@@ -64,7 +65,12 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isPresenting) {
-                EmptyView()
+                NavigationView {
+                    RouteCollectiVewControllerRepresentable()
+                        .navigationTitle(Text("Routes"))
+                        .ignoresSafeArea()
+                        .environment(\.managedObjectContext, viewContext)
+                }
             }
         }
     }

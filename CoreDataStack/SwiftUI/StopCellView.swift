@@ -16,7 +16,6 @@ struct StopCellView: View {
 
     var body: some View {
         HStack {
-
             Text("\(index).")
                 .frame(width: 24)
                 .animation(nil)
@@ -27,7 +26,7 @@ struct StopCellView: View {
                 Text(stop.city?.prefix(10) ?? "")
                     .foregroundColor(.secondary)
             }
+            Spacer()
         }
-
     }
 }
