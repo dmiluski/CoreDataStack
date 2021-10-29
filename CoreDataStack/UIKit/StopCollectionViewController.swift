@@ -11,7 +11,7 @@ class StopCollectionViewController: UIViewController {
 
     // MARK: - UI
 
-    let collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: createLayout()
@@ -37,16 +37,16 @@ class StopCollectionViewController: UIViewController {
 
         var dataSource = UICollectionViewDiffableDataSource<Int, NSManagedObjectID>(
             collectionView: collectionView
-        ) { collectionView, indexPath, objectID -> UICollectionViewCell? in
+        ) { [unowned self] collectionView, indexPath, objectID -> UICollectionViewCell? in
 
-            guard let object = try? self.managedObjectContext.existingObject(with: objectID) as? Stop else {
+            guard let stop = self.route.stops?.array[indexPath.row] as? Stop else {
                 return nil
             }
 
             return collectionView.dequeueConfiguredReusableCell(
                 using:  cellRegistration,
                 for: indexPath,
-                item: object
+                item: stop
             )
         }
 
@@ -154,11 +154,11 @@ extension StopCollectionViewController {
     /// Composed Layout Factory
     ///
     /// Provides a composition of Start/Waypoint/End Section Layouts and their respective configurations
-    static func createLayout() -> UICollectionViewLayout {
+    func createLayout() -> UICollectionViewLayout {
         let sectionProvider =
-        {(sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        { [unowned self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             NSCollectionLayoutSection.list(
-                using: makeWaypointSectionListConfiguration(),
+                using: self.makeWaypointSectionListConfiguration(),
                 layoutEnvironment: layoutEnvironment
             )
         }
@@ -168,13 +168,55 @@ extension StopCollectionViewController {
     /// Waypoint SectionConfiguration Factory
     ///
     /// Provides section configuration handlers for cell separators and swipe action handling
-    static func makeWaypointSectionListConfiguration() -> UICollectionLayoutListConfiguration {
-        let config = UICollectionLayoutListConfiguration(appearance: .plain)
+    func makeWaypointSectionListConfiguration() -> UICollectionLayoutListConfiguration {
+        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+
+        config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+
+            let deleteAction = UIContextualAction(
+                style: .destructive,
+                title: NSLocalizedString("DELETE", comment: ""),
+                handler: { _, _, completion in
+
+                    defer { completion(true) }
+
+                    guard let identifier = diffableDataSource.itemIdentifier(for: indexPath),
+                          let route = managedObjectContext.object(with: identifier) as? Stop else {
+                              return
+                          }
+
+                    self.managedObjectContext.delete(route)
+                    self.trySave()
+                }
+            )
+
+            return UISwipeActionsConfiguration(actions: [
+                deleteAction,
+            ])
+        }
 
         // TODO: Configure Swipe Actions Here
         return config
     }
 }
+
+// MARK: - IBActions
+extension StopCollectionViewController {
+
+    private func trySave() {
+        do {
+            try managedObjectContext.save()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+
+}
+
+// MARK: - SwiftUI Representable
 
 struct StopCollectionViewControllerRepresentable: UIViewControllerRepresentable {
     @Environment(\.managedObjectContext) private var viewContext

@@ -18,8 +18,11 @@ struct RouteCellView: View {
                     Text(name)
                 }
 
-                Text(route.timestamp!, formatter: itemFormatter)
-                    .foregroundColor(.secondary)
+                if let timeStamp = route.timestamp  {
+                    Text(timeStamp, formatter: itemFormatter)
+                        .foregroundColor(.secondary)
+                }
+
             }
             Spacer()
         }

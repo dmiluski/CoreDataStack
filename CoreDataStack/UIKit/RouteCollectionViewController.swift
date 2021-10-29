@@ -10,7 +10,7 @@ class RouteCollectionViewController: UIViewController {
 
     // MARK: - UI
 
-    let collectionView: UICollectionView = {
+    lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
             collectionViewLayout: createLayout()
@@ -179,11 +179,11 @@ extension RouteCollectionViewController {
     /// Composed Layout Factory
     ///
     /// Provides a composition of Start/Waypoint/End Section Layouts and their respective configurations
-    static func createLayout() -> UICollectionViewLayout {
+    func createLayout() -> UICollectionViewLayout {
         let sectionProvider =
-        {(sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+        { [unowned self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             NSCollectionLayoutSection.list(
-                using: makeWaypointSectionListConfiguration(),
+                using: self.makeStopSectionListConfiguration(),
                 layoutEnvironment: layoutEnvironment
             )
         }
@@ -193,8 +193,32 @@ extension RouteCollectionViewController {
     /// Waypoint SectionConfiguration Factory
     ///
     /// Provides section configuration handlers for cell separators and swipe action handling
-    static func makeWaypointSectionListConfiguration() -> UICollectionLayoutListConfiguration {
-        let config = UICollectionLayoutListConfiguration(appearance: .plain)
+    func makeStopSectionListConfiguration() -> UICollectionLayoutListConfiguration {
+        var config = UICollectionLayoutListConfiguration(appearance: .plain)
+
+        config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+
+            let deleteAction = UIContextualAction(
+                style: .destructive,
+                title: NSLocalizedString("DELETE", comment: ""),
+                handler: { _, _, completion in
+
+                    defer { completion(true) }
+
+                    guard let identifier = diffableDataSource.itemIdentifier(for: indexPath),
+                          let route = managedObjectContext.object(with: identifier) as? Route else {
+                              return
+                          }
+
+                    self.managedObjectContext.delete(route)
+                    self.trySave()
+                }
+            )
+
+            return UISwipeActionsConfiguration(actions: [
+                deleteAction,
+            ])
+        }
 
         // TODO: Configure Swipe Actions Here
         return config
