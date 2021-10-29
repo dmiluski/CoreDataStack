@@ -93,6 +93,21 @@ class RouteCollectionViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = diffableDataSource
 
+
+        let item = UIBarButtonItem(
+            title: "Add",
+            image: UIImage(systemName: "plus"),
+            primaryAction: UIAction { [unowned self] action in
+
+                let route = Route(context: self.managedObjectContext)
+                route.name = String(UUID().uuidString.prefix(5))
+                route.timestamp = Date()
+                self.trySave()
+            }
+        )
+
+        self.navigationItem.rightBarButtonItem = item
+
         do {
             try fetchedResultController.performFetch()
         } catch {
@@ -194,4 +209,33 @@ struct RouteCollectiVewControllerRepresentable: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ uiViewController: RouteCollectionViewController, context: Context) {}
+}
+
+// MARK: - IBActions
+
+extension RouteCollectionViewController {
+
+    private func addItem() {
+        let newItem = Route(context: managedObjectContext)
+        newItem.timestamp = Date()
+        newItem.name = String(UUID().uuidString.prefix(5))
+        trySave()
+    }
+
+//    private func deleteItems(offsets: IndexSet) {
+//        offsets.map { items[$0] }.forEach(managedObjectContext.delete)
+//        trySave()
+//    }
+
+    private func trySave() {
+        do {
+            try managedObjectContext.save()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+
 }

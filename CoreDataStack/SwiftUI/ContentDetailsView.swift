@@ -49,6 +49,7 @@ struct ContentDetailsView: View {
                 .onMove(perform: moveItems)
                 .onDelete(perform: deleteItems)
             }
+            .listStyle(PlainListStyle())
 
             // Include Empty ForEach of FetchedResults to observe changes for animations
             //

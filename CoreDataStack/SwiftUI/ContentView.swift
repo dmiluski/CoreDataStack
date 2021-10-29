@@ -32,6 +32,7 @@ struct ContentView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
+            .listStyle(PlainListStyle())
             .navigationTitle(Text("Routes"))
             .toolbar {
 
@@ -65,12 +66,17 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isPresenting) {
-                NavigationView {
-                    RouteCollectiVewControllerRepresentable()
-                        .navigationTitle(Text("Routes"))
-                        .ignoresSafeArea()
-                        .environment(\.managedObjectContext, viewContext)
-                }
+
+                NavigationViewControllerRepresentable(rootViewController: RouteCollectionViewController(viewContext))
+                    .environment(\.managedObjectContext, viewContext)
+                    .ignoresSafeArea()
+
+//                NavigationView {
+//                    RouteCollectiVewControllerRepresentable()
+//                        .navigationTitle(Text("Routes"))
+//                        .ignoresSafeArea()
+//                        .environment(\.managedObjectContext, viewContext)
+//                }
             }
         }
     }
