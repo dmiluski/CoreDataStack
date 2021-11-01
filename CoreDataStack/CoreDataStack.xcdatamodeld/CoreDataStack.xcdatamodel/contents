@@ -12,7 +12,7 @@
         <attribute name="remoteIdentifier" optional="YES" attributeType="String"/>
         <attribute name="street" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Route" inverseName="stops" inverseEntity="Route"/>
+        <relationship name="parent" maxCount="1" deletionRule="Nullify" destinationEntity="Route" inverseName="stops" inverseEntity="Route"/>
     </entity>
     <elements>
         <element name="Route" positionX="-63" positionY="-18" width="128" height="89"/>

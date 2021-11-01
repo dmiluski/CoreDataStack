@@ -15,9 +15,9 @@ class RouteCollectionViewController: UIViewController {
             frame: .zero,
             collectionViewLayout: createLayout()
         )
-
         return collectionView
     }()
+
 
     // MARK: - DataSources
 
@@ -28,6 +28,9 @@ class RouteCollectionViewController: UIViewController {
 
         UICollectionView.CellRegistration<RouteCell, Route> { [unowned self] cell, indexPath, value in
             cell.configure(with: value, parent: self)
+            cell.accessories = [
+                .delete(),
+            ]
         }
     }
 
@@ -94,25 +97,26 @@ class RouteCollectionViewController: UIViewController {
         collectionView.dataSource = diffableDataSource
 
 
-        let item = UIBarButtonItem(
+        let add = UIBarButtonItem(
             title: "Add",
             image: UIImage(systemName: "plus"),
             primaryAction: UIAction { [unowned self] action in
-
-                let route = Route(context: self.managedObjectContext)
-                route.name = String(UUID().uuidString.prefix(5))
-                route.timestamp = Date()
-                self.trySave()
+                self.addItem()
             }
         )
 
-        self.navigationItem.rightBarButtonItem = item
+        self.navigationItem.rightBarButtonItems = [editButtonItem, add]
 
         do {
             try fetchedResultController.performFetch()
         } catch {
             print("Error: \(error)")
         }
+    }
+
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        collectionView.isEditing = editing
     }
 }
 
@@ -138,7 +142,6 @@ extension RouteCollectionViewController: UICollectionViewDelegate {
 
         let vc = StopCollectionViewController(managedObjectContext, route: route)
         navigationController?.pushViewController(vc, animated: true)
-
     }
 }
 
@@ -200,7 +203,7 @@ extension RouteCollectionViewController {
 
             let deleteAction = UIContextualAction(
                 style: .destructive,
-                title: NSLocalizedString("DELETE", comment: ""),
+                title: NSLocalizedString("Delete", comment: ""),
                 handler: { _, _, completion in
 
                     defer { completion(true) }
@@ -245,11 +248,6 @@ extension RouteCollectionViewController {
         newItem.name = String(UUID().uuidString.prefix(5))
         trySave()
     }
-
-//    private func deleteItems(offsets: IndexSet) {
-//        offsets.map { items[$0] }.forEach(managedObjectContext.delete)
-//        trySave()
-//    }
 
     private func trySave() {
         do {
