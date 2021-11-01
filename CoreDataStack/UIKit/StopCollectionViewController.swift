@@ -75,11 +75,7 @@ class StopCollectionViewController: UIViewController {
 
         // Connect BackingStore Updates
         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
-
-            // Apply on next RunLoop to allow for non-deadlocked save
-            DispatchQueue.main.async {
-                self?.handleReorder(transaction)
-            }
+            self?.handleReorder(transaction)
         }
         
         // TODO: - Additional Configurations
@@ -88,20 +84,33 @@ class StopCollectionViewController: UIViewController {
 
     func handleReorder(_ transaction: (NSDiffableDataSourceTransaction<Int, NSManagedObjectID>)) {
 
-        // Gather Final Ordering
-        transaction
-            .finalSnapshot
-            .itemIdentifiers
-            .enumerated()
-            .forEach { (index, objectID) in
+        // Recalculate Indices on background Context
+        DispatchQueue
+            .global(qos: .userInitiated)
+            .async { [managedObjectContext] in
+                let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                context.parent = managedObjectContext
+                context.automaticallyMergesChangesFromParent = true
+                context.perform {
+                    transaction
+                        .finalSnapshot
+                        .itemIdentifiers
+                        .compactMap { objectID in
+                            context.object(with: objectID) as? Stop
+                        }
+                        .enumerated()
+                        .forEach { (index, stop) in
+                            stop.index = Int64(index)
+                        }
 
-                // Update Index
-                if let stop = managedObjectContext.object(with: objectID) as? Stop {
-                    stop.index = Int64(index)
-                }
+                    // Merge with parent
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Dane - error: \(error)")
+                    }
             }
-
-        trySave()
+        }
     }
 
     lazy var fetchedResultController: NSFetchedResultsController<Stop>  = {
@@ -191,40 +200,26 @@ extension StopCollectionViewController: NSFetchedResultsControllerDelegate {
         _ controller: NSFetchedResultsController<NSFetchRequestResult>,
         didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
     ) {
-        guard let dataSource = collectionView.dataSource as? UICollectionViewDiffableDataSource<Int, NSManagedObjectID> else {
-            assertionFailure("The data source has not implemented snapshot support while it should")
-            return
+        let diffableSnapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
+        diffableDataSource.apply(diffableSnapshot) { [weak self] in
+//            self?.reindexStops()
         }
+    }
 
-        var snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
-        let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
+    private func reindexStops() {
 
-        // Inspect Identifiers for changes
-        let reloadIdentifiers: [NSManagedObjectID] = snapshot
+        diffableDataSource
+            .snapshot()
             .itemIdentifiers
-            .compactMap { itemIdentifier in
-
-
-                guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier),
-                      let index = snapshot.indexOfItem(itemIdentifier),
-                      index == currentIndex else {
-                          return nil
-                      }
-
-
-                guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier),
-                      existingObject.isUpdated else {
-                          return nil
-                      }
-
-                return itemIdentifier
+            .enumerated()
+            .forEach { (index, objectID) in
+                guard let stop = managedObjectContext.object(with: objectID) as? Stop else {
+                    return
+                }
+                stop.index = Int64(index)
             }
 
-        snapshot.reloadItems(reloadIdentifiers)
-        dataSource.apply(
-            snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>,
-            animatingDifferences: true
-        )
+        trySave()
     }
 }
 
