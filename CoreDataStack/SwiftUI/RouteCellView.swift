@@ -14,7 +14,7 @@ struct RouteCellView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                if let name = route.name {
+                if let name = route.displayableName {
                     Text(name)
                 }
 

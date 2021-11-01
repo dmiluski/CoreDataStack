@@ -17,8 +17,17 @@ class StopCollectionViewController: UIViewController {
             collectionViewLayout: createLayout()
         )
 
+        let longPressGesture = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(self.handleLongGesture(gesture:))
+        )
+        collectionView.addGestureRecognizer(longPressGesture)
+        self.longPressGesture = longPressGesture
+
+
         return collectionView
     }()
+    fileprivate var longPressGesture: UILongPressGestureRecognizer?
 
     // MARK: - DataSources
 
@@ -27,7 +36,15 @@ class StopCollectionViewController: UIViewController {
 
     func makeCellRegistration() -> UICollectionView.CellRegistration<StopCell, Stop> {
         UICollectionView.CellRegistration<StopCell, Stop> { [unowned self] cell, indexPath, stop in
+
+            // Configure Cell
             cell.configure(with: indexPath.row, stop: stop, parent: self)
+
+            // Enable Reorder/Delete Accessories
+            cell.accessories = [
+                .reorder(),
+                .delete(),
+            ]
         }
     }
 
@@ -50,18 +67,55 @@ class StopCollectionViewController: UIViewController {
             )
         }
 
+        dataSource.reorderingHandlers.canReorderItem = { item in
+            return true
+        }
+
+        // Connect BackingStore Updates
+        dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
+
+            // Apply on next RunLoop to allow Drag/Drop Completion
+            self?.handleReorder(transaction)
+        }
+        
         // TODO: - Additional Configurations
         return dataSource
     }()
+
+    func handleReorder(_ transaction: (NSDiffableDataSourceTransaction<Int, NSManagedObjectID>)) {
+
+        guard var stops = route.stops?.array as? [Stop] else {
+            return
+        }
+
+        var movedStop: Stop?
+        transaction
+            .difference
+            .forEach { change in
+
+
+            switch change {
+            case let .insert(offset: offset, element: _, associatedWith: _):
+                if let stop = movedStop {
+                    stops.insert(stop, at: offset)
+                    movedStop = nil
+                }
+
+            case let .remove(offset: offset, element: _, associatedWith: _):
+                movedStop = stops.remove(at: offset)
+            }
+        }
+
+        route.stops = NSOrderedSet(array: stops)
+        trySave()
+    }
 
     lazy var fetchedResultController: NSFetchedResultsController<Stop>  = {
 
 
         let fetchRequest: NSFetchRequest<Stop> = Stop.fetchRequest()
 
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Stop.street, ascending: true),
-        ]
+        fetchRequest.sortDescriptors = []
         fetchRequest.predicate = NSPredicate(format: "parent == %@", route)
 
         let controller = NSFetchedResultsController(
@@ -94,11 +148,26 @@ class StopCollectionViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = diffableDataSource
 
+        let add = UIBarButtonItem(
+            title: "Add",
+            image: UIImage(systemName: "plus"),
+            primaryAction: UIAction { [unowned self] action in
+                self.addItem()
+            }
+        )
+
+        self.navigationItem.rightBarButtonItems = [editButtonItem, add]
+        
         do {
             try fetchedResultController.performFetch()
         } catch {
             print("Error: \(error)")
         }
+    }
+
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        collectionView.isEditing = editing
     }
 }
 
@@ -113,8 +182,9 @@ extension StopCollectionViewController {
 // MARK: - UICollectionViewDelegate
 
 extension StopCollectionViewController: UICollectionViewDelegate {
-
-
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+    }
 }
 
 // MARK: - FetchResultsControllerDelegate
@@ -132,18 +202,32 @@ extension StopCollectionViewController: NSFetchedResultsControllerDelegate {
         var snapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
         let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
 
-        let reloadIdentifiers: [NSManagedObjectID] = snapshot.itemIdentifiers.compactMap { itemIdentifier in
-            guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier), let index = snapshot.indexOfItem(itemIdentifier), index == currentIndex else {
-                return nil
+        // Inspect Identifiers for changes
+        var reloadIdentifiers: [NSManagedObjectID] = snapshot
+            .itemIdentifiers
+            .compactMap { itemIdentifier in
+
+
+                guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier),
+                      let index = snapshot.indexOfItem(itemIdentifier),
+                      index == currentIndex else {
+                          return nil
+                      }
+
+
+                guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier),
+                      existingObject.isUpdated else {
+                          return nil
+                      }
+
+                return itemIdentifier
             }
-            guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier), existingObject.isUpdated else { return nil }
-            return itemIdentifier
-        }
+
         snapshot.reloadItems(reloadIdentifiers)
-
-        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>, animatingDifferences: true)
-
-
+        dataSource.apply(
+            snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>,
+            animatingDifferences: true
+        )
     }
 }
 
@@ -175,7 +259,7 @@ extension StopCollectionViewController {
 
             let deleteAction = UIContextualAction(
                 style: .destructive,
-                title: NSLocalizedString("DELETE", comment: ""),
+                title: NSLocalizedString("Dekete", comment: ""),
                 handler: { _, _, completion in
 
                     defer { completion(true) }
@@ -201,6 +285,7 @@ extension StopCollectionViewController {
 }
 
 // MARK: - IBActions
+
 extension StopCollectionViewController {
 
     private func trySave() {
@@ -213,6 +298,49 @@ extension StopCollectionViewController {
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
+
+    /// Long Gesture Handler
+    ///
+    /// Detects long press gestures allowing for direct movement of cells and animations vs putting the collection in edit mode
+    @objc
+    func handleLongGesture(gesture: UILongPressGestureRecognizer) {
+
+        // Confirm View Exists
+        guard let gestureView = gesture.view else { return }
+
+        // Forward message to appropriate CollectionView Handler
+        switch gesture.state {
+
+        case .began:
+            guard let selectedIndexPath = collectionView.indexPathForItem(at: gesture.location(in: collectionView))
+            else {
+                break
+            }
+            collectionView.beginInteractiveMovementForItem(at: selectedIndexPath)
+        case .changed:
+            collectionView.updateInteractiveMovementTargetPosition(gesture.location(in: gestureView))
+        case .ended:
+            collectionView.endInteractiveMovement()
+        default:
+            collectionView.cancelInteractiveMovement()
+        }
+
+    }
+
+    private func addItem() {
+
+        // Construct Object
+        let newItem = Stop(context: managedObjectContext)
+        newItem.street = UUID().uuidString
+        newItem.city = UUID().uuidString
+        newItem.updatedAt = Date()
+        newItem.createdAt = Date()
+
+        route.addToStops(newItem)
+
+        trySave()
+    }
+
 
 }
 

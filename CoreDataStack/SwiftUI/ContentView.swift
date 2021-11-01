@@ -117,7 +117,7 @@ struct ContentView: View {
         withAnimation {
             let newItem = Route(context: viewContext)
             newItem.timestamp = Date()
-            newItem.name = String(UUID().uuidString.prefix(5))
+            newItem.displayableName = String(UUID().uuidString.prefix(5))
             trySave()
         }
     }
