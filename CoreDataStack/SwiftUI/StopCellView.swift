@@ -9,14 +9,12 @@ import SwiftUI
 
 struct StopCellView: View {
 
-    let index: Int
-
     @ObservedObject
     var stop: Stop
 
     var body: some View {
         HStack {
-            Text("\(index).")
+            Text("\(stop.index).")
                 .frame(width: 24)
                 .animation(nil)
 

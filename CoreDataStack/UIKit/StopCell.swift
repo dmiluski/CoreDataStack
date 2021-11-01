@@ -7,7 +7,7 @@ import UIKit
 ///
 /// Responsible for displaying **rich** version of Cell
 class StopCell: SwiftUICollectionViewCell<StopCellView> {
-    func configure(with index: Int, stop: Stop, parent: UIViewController) {
-        configure(in: parent, withView: StopCellView(index: index, stop: stop))
+    func configure(stop: Stop, parent: UIViewController) {
+        configure(in: parent, withView: StopCellView(stop: stop))
     }
 }

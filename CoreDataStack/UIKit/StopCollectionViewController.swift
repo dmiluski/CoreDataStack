@@ -27,6 +27,7 @@ class StopCollectionViewController: UIViewController {
 
         return collectionView
     }()
+
     fileprivate var longPressGesture: UILongPressGestureRecognizer?
 
     // MARK: - DataSources
@@ -38,7 +39,7 @@ class StopCollectionViewController: UIViewController {
         UICollectionView.CellRegistration<StopCell, Stop> { [unowned self] cell, indexPath, stop in
 
             // Configure Cell
-            cell.configure(with: indexPath.row, stop: stop, parent: self)
+            cell.configure(stop: stop, parent: self)
 
             // Enable Reorder/Delete Accessories
             cell.accessories = [
@@ -56,7 +57,8 @@ class StopCollectionViewController: UIViewController {
             collectionView: collectionView
         ) { [unowned self] collectionView, indexPath, objectID -> UICollectionViewCell? in
 
-            guard let stop = self.route.stops?.array[indexPath.row] as? Stop else {
+
+            guard let stop = managedObjectContext.object(with: objectID) as? Stop else {
                 return nil
             }
 
@@ -74,8 +76,10 @@ class StopCollectionViewController: UIViewController {
         // Connect BackingStore Updates
         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
 
-            // Apply on next RunLoop to allow Drag/Drop Completion
-            self?.handleReorder(transaction)
+            // Apply on next RunLoop to allow for non-deadlocked save
+            DispatchQueue.main.async {
+                self?.handleReorder(transaction)
+            }
         }
         
         // TODO: - Additional Configurations
@@ -84,29 +88,19 @@ class StopCollectionViewController: UIViewController {
 
     func handleReorder(_ transaction: (NSDiffableDataSourceTransaction<Int, NSManagedObjectID>)) {
 
-        guard var stops = route.stops?.array as? [Stop] else {
-            return
-        }
-
-        var movedStop: Stop?
+        // Gather Final Ordering
         transaction
-            .difference
-            .forEach { change in
+            .finalSnapshot
+            .itemIdentifiers
+            .enumerated()
+            .forEach { (index, objectID) in
 
-
-            switch change {
-            case let .insert(offset: offset, element: _, associatedWith: _):
-                if let stop = movedStop {
-                    stops.insert(stop, at: offset)
-                    movedStop = nil
+                // Update Index
+                if let stop = managedObjectContext.object(with: objectID) as? Stop {
+                    stop.index = Int64(index)
                 }
-
-            case let .remove(offset: offset, element: _, associatedWith: _):
-                movedStop = stops.remove(at: offset)
             }
-        }
 
-        route.stops = NSOrderedSet(array: stops)
         trySave()
     }
 
@@ -115,7 +109,10 @@ class StopCollectionViewController: UIViewController {
 
         let fetchRequest: NSFetchRequest<Stop> = Stop.fetchRequest()
 
-        fetchRequest.sortDescriptors = []
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Stop.index, ascending: true)
+        ]
+
         fetchRequest.predicate = NSPredicate(format: "parent == %@", route)
 
         let controller = NSFetchedResultsController(
@@ -203,7 +200,7 @@ extension StopCollectionViewController: NSFetchedResultsControllerDelegate {
         let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
 
         // Inspect Identifiers for changes
-        var reloadIdentifiers: [NSManagedObjectID] = snapshot
+        let reloadIdentifiers: [NSManagedObjectID] = snapshot
             .itemIdentifiers
             .compactMap { itemIdentifier in
 
@@ -335,6 +332,11 @@ extension StopCollectionViewController {
         newItem.city = UUID().uuidString
         newItem.updatedAt = Date()
         newItem.createdAt = Date()
+
+        // Assume Append at end
+        let index: Int = route.stops?.count ?? 0
+        newItem.index = Int64(index)
+//        newItem.index = route.stops.count ?? 0
 
         route.addToStops(newItem)
 

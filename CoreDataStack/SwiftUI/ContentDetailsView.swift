@@ -14,7 +14,9 @@ extension ContentDetailsView {
         self.route = route
         _items = FetchRequest(
             entity: Stop.entity(),
-            sortDescriptors: [],
+            sortDescriptors: [
+                NSSortDescriptor(keyPath: \Stop.index, ascending: true),
+            ],
             predicate: NSPredicate(format: "parent == %@", route),
             animation: .default
         )
@@ -31,31 +33,19 @@ struct ContentDetailsView: View {
     @ObservedObject
     var route: Route
 
-    /// Ordered Stops
-    var stops: [Stop] {
-        let stops = route.stops?.array as? [Stop] ?? []
-        return stops
-    }
-
     var body: some View {
 
         VStack {
 
             // Use Stops which provides ordering
             List {
-                ForEach(Array(stops.enumerated()), id: \.element.self) { offset, item in
-                    StopCellView(index: offset, stop: item)
+                ForEach(items, id: \.self) { stop in
+                    StopCellView(stop: stop)
                 }
                 .onMove(perform: moveItems)
                 .onDelete(perform: deleteItems)
             }
             .listStyle(PlainListStyle())
-
-            // Include Empty ForEach of FetchedResults to observe changes for animations
-            //
-            // Given Ordered stops is accessible via Route.Stops.Array, ordering is preserved
-            // But if we were to use items result, order would not be preserved
-            ForEach(items, id: \.self){ _ in }
         }
 
         .toolbar {
@@ -87,6 +77,9 @@ struct ContentDetailsView: View {
             newItem.updatedAt = Date()
             newItem.createdAt = Date()
 
+            let index: Int = items.count
+            newItem.index = Int64(index)
+
             // Set Ordered Relationship (NSOrderedSet takes care of appended ordering)
             route.addToStops(newItem)
 
@@ -97,8 +90,9 @@ struct ContentDetailsView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
 
+            let stops = items.map { $0 }
             offsets
-                .compactMap { route.stops?.array[$0] as? Stop }
+                .compactMap { stops[$0] }
                 .forEach(viewContext.delete)
 
             trySave()
@@ -107,21 +101,12 @@ struct ContentDetailsView: View {
 
     private func moveItems(source: IndexSet, to destination: Int) {
 
-        guard var stops = route.stops?.array else {
-            return
-        }
-
-
-        // Apply Move
+        var stops = items.map { $0 }
         stops.move(fromOffsets: source, toOffset: destination)
-        withAnimation {
-            // Update
-            route.stops = NSOrderedSet(array: stops)
-
-            trySave()
+        stops.enumerated().forEach { (index, stop) in
+            stop.index = Int64(index)
         }
-
-
+        trySave()
     }
 
     private func loadRemoteRoutes() {
@@ -140,8 +125,8 @@ struct ContentDetailsView: View {
 
             // Mock Handle a chanced application of either prefixing street number or removing to show
             // animated handling
+
             route.stops?
-                .array
                 .compactMap { $0 as? Stop }
                 .forEach { stop in
 

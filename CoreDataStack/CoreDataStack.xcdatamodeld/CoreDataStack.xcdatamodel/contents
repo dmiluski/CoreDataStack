@@ -4,11 +4,12 @@
         <attribute name="displayableName" optional="YES" attributeType="String"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="String"/>
         <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="stops" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="Stop" inverseName="parent" inverseEntity="Stop"/>
+        <relationship name="stops" toMany="YES" deletionRule="Cascade" destinationEntity="Stop" inverseName="parent" inverseEntity="Stop"/>
     </entity>
     <entity name="Stop" representedClassName="Stop" syncable="YES" codeGenerationType="class">
         <attribute name="city" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="index" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="String"/>
         <attribute name="street" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -16,6 +17,6 @@
     </entity>
     <elements>
         <element name="Route" positionX="-63" positionY="-18" width="128" height="89"/>
-        <element name="Stop" positionX="-54" positionY="0" width="128" height="119"/>
+        <element name="Stop" positionX="-54" positionY="0" width="128" height="134"/>
     </elements>
 </model>
