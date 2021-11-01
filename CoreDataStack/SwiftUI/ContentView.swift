@@ -53,6 +53,15 @@ struct ContentView: View {
 
                 // Bottom Toolbar
                 ToolbarItemGroup(placement: .bottomBar) {
+
+                    Button(action: {
+                        withAnimation {
+                            items.forEach(viewContext.delete(_:))
+                        }
+                    }){
+                        Image(systemName: "trash")
+                    }
+
                     Spacer()
 
                     Button(action: {
