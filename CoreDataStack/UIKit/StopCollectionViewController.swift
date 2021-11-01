@@ -104,11 +104,7 @@ class StopCollectionViewController: UIViewController {
                         }
 
                     // Merge with parent
-                    do {
-                        try context.save()
-                    } catch {
-                        print("Dane - error: \(error)")
-                    }
+                    try? context.save()
             }
         }
     }
@@ -201,25 +197,7 @@ extension StopCollectionViewController: NSFetchedResultsControllerDelegate {
         didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference
     ) {
         let diffableSnapshot = snapshot as NSDiffableDataSourceSnapshot<Int, NSManagedObjectID>
-        diffableDataSource.apply(diffableSnapshot) { [weak self] in
-//            self?.reindexStops()
-        }
-    }
-
-    private func reindexStops() {
-
-        diffableDataSource
-            .snapshot()
-            .itemIdentifiers
-            .enumerated()
-            .forEach { (index, objectID) in
-                guard let stop = managedObjectContext.object(with: objectID) as? Stop else {
-                    return
-                }
-                stop.index = Int64(index)
-            }
-
-        trySave()
+        diffableDataSource.apply(diffableSnapshot)
     }
 }
 
@@ -331,7 +309,6 @@ extension StopCollectionViewController {
         // Assume Append at end
         let index: Int = route.stops?.count ?? 0
         newItem.index = Int64(index)
-//        newItem.index = route.stops.count ?? 0
 
         route.addToStops(newItem)
 

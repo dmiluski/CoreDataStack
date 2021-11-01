@@ -47,7 +47,6 @@ struct ContentDetailsView: View {
             }
             .listStyle(PlainListStyle())
         }
-
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: loadRemoteRoutes) {
@@ -71,17 +70,17 @@ struct ContentDetailsView: View {
         withAnimation {
 
             // Construct Object
-            let newItem = Stop(context: viewContext)
-            newItem.street = UUID().uuidString
-            newItem.city = UUID().uuidString
-            newItem.updatedAt = Date()
-            newItem.createdAt = Date()
+            let stop = Stop(context: viewContext)
+            stop.street = UUID().uuidString
+            stop.city = UUID().uuidString
+            stop.updatedAt = Date()
+            stop.createdAt = Date()
 
             let index: Int = items.count
-            newItem.index = Int64(index)
+            stop.index = Int64(index)
 
             // Set Ordered Relationship (NSOrderedSet takes care of appended ordering)
-            route.addToStops(newItem)
+            route.addToStops(stop)
 
             trySave()
         }

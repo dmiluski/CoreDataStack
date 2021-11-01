@@ -50,7 +50,7 @@ class RouteCollectionViewController: UIViewController {
                 using:  cellRegistration,
                 for: indexPath,
                 item: object
-            )
+                )
         }
         
         // TODO: - Additional Configurations
@@ -136,9 +136,9 @@ extension RouteCollectionViewController: UICollectionViewDelegate {
         collectionView.deselectItem(at: indexPath, animated: true)
 
         guard let identifier = diffableDataSource.itemIdentifier(for: indexPath),
-            let route = managedObjectContext.object(with: identifier) as? Route else {
-            return
-        }
+              let route = try? managedObjectContext.existingObject(with: identifier) as? Route else {
+                  return
+              }
 
         let vc = StopCollectionViewController(managedObjectContext, route: route)
         navigationController?.pushViewController(vc, animated: true)
@@ -225,10 +225,19 @@ struct RouteCollectiVewControllerRepresentable: UIViewControllerRepresentable {
 extension RouteCollectionViewController {
 
     private func addItem() {
+
         let newItem = Route(context: managedObjectContext)
         newItem.timestamp = Date()
         newItem.displayableName = String(UUID().uuidString.prefix(5))
+        newItem.stops = []
         trySave()
+
+        do {
+            try fetchedResultController.performFetch()
+        } catch {
+            print("Error: \(error)")
+        }
+
     }
 
     private func trySave() {

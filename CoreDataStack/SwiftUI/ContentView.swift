@@ -75,17 +75,9 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isPresenting) {
-
                 NavigationViewControllerRepresentable(rootViewController: RouteCollectionViewController(viewContext))
                     .environment(\.managedObjectContext, viewContext)
                     .ignoresSafeArea()
-
-//                NavigationView {
-//                    RouteCollectiVewControllerRepresentable()
-//                        .navigationTitle(Text("Routes"))
-//                        .ignoresSafeArea()
-//                        .environment(\.managedObjectContext, viewContext)
-//                }
             }
         }
     }
