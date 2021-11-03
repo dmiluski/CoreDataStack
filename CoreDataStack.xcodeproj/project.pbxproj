@@ -71,6 +71,7 @@
 		2E5F076D272B5D2B00E1671C /* RouteCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteCollectionViewController.swift; sourceTree = "<group>"; };
 		2E5F076F272BA54F00E1671C /* StopCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCollectionViewController.swift; sourceTree = "<group>"; };
 		2E5F0771272BB0AF00E1671C /* NavigationControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationControllerRepresentable.swift; sourceTree = "<group>"; };
+		2ED16F8F27330836000FAE10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2EF688192728B9E2005DEF20 /* StopCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -102,6 +103,7 @@
 		2E18738B2728975E00360A63 = {
 			isa = PBXGroup;
 			children = (
+				2ED16F8F27330836000FAE10 /* README.md */,
 				2E1873962728975E00360A63 /* CoreDataStack */,
 				2E1873AC2728976100360A63 /* CoreDataStackTests */,
 				2E1873B62728976100360A63 /* CoreDataStackUITests */,
