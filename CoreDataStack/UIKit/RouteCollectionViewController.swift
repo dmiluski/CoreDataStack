@@ -237,11 +237,9 @@ struct RouteCollectiVewControllerRepresentable: UIViewControllerRepresentable {
 extension RouteCollectionViewController {
 
     private func addItem() {
-
         let newItem = Route(context: managedObjectContext)
         newItem.timestamp = Date()
         newItem.displayableName = String(UUID().uuidString.prefix(5))
-        newItem.stops = []
         trySave()
     }
 

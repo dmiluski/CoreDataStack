@@ -15,7 +15,7 @@ struct StopCellView: View {
     var body: some View {
         HStack {
             Text("\(stop.index).")
-                .frame(width: 24)
+                .frame(width: 36)
                 .animation(nil)
 
             VStack(alignment: .leading) {

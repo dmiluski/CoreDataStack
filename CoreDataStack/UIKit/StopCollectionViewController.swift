@@ -75,7 +75,9 @@ class StopCollectionViewController: UIViewController {
 
         // Connect BackingStore Updates
         dataSource.reorderingHandlers.didReorder = { [weak self] transaction in
-            self?.handleReorder(transaction)
+            DispatchQueue.main.async {
+                self?.handleReorder(transaction)
+            }
         }
         
         // TODO: - Additional Configurations
@@ -84,33 +86,22 @@ class StopCollectionViewController: UIViewController {
 
     func handleReorder(_ transaction: (NSDiffableDataSourceTransaction<Int, NSManagedObjectID>)) {
 
-        // Recalculate Indices on background Context
-        DispatchQueue
-            .global(qos: .userInitiated)
-            .async { [managedObjectContext] in
-                let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-                context.parent = managedObjectContext
-                context.automaticallyMergesChangesFromParent = true
-                context.perform {
-                    transaction
-                        .finalSnapshot
-                        .itemIdentifiers
-                        .compactMap { objectID in
-                            context.object(with: objectID) as? Stop
-                        }
-                        .enumerated()
-                        .forEach { (index, stop) in
-                            stop.index = Int64(index)
-                        }
+        managedObjectContext
+            .performAndWait { [managedObjectContext] in
 
-                    // Merge with parent
-                    do {
-                        try context.save()
-                    } catch {
-                        print("Dane - error: \(error)")
+                transaction
+                    .finalSnapshot
+                    .itemIdentifiers
+                    .compactMap { objectID in
+                        try? managedObjectContext.existingObject(with: objectID) as? Stop
                     }
-            }
+                    .enumerated ()
+                    .forEach { (index, stop) in
+                        stop.index = Int64(index)
+                    }
         }
+
+        trySave()
     }
 
     lazy var fetchedResultController: NSFetchedResultsController<Stop>  = {
@@ -233,18 +224,16 @@ extension StopCollectionViewController {
 
             let deleteAction = UIContextualAction(
                 style: .destructive,
-                title: NSLocalizedString("Dekete", comment: ""),
+                title: NSLocalizedString("Delete", comment: ""),
                 handler: { _, _, completion in
 
                     defer { completion(true) }
 
                     guard let identifier = diffableDataSource.itemIdentifier(for: indexPath),
-                          let route = managedObjectContext.object(with: identifier) as? Stop else {
+                          let stop = try? managedObjectContext.existingObject(with: identifier) as? Stop else {
                               return
                           }
-
-                    self.managedObjectContext.delete(route)
-                    self.trySave()
+                    self.delete(stop)
                 }
             )
 
@@ -299,6 +288,30 @@ extension StopCollectionViewController {
             collectionView.cancelInteractiveMovement()
         }
 
+    }
+
+    fileprivate func delete(_ stop: Stop) {
+
+
+        managedObjectContext.performAndWait {
+
+            // Reindex Route's Stops
+            fetchedResultController.fetchedObjects?
+
+                // Keep items not deleted
+                .filter({ $0 != stop })
+
+                // Enumerate for Index
+                .enumerated()
+
+                // Update to new placement
+                .forEach { index, stop in
+                    stop.index = Int64(index)
+                }
+
+            // Delete Stop
+            managedObjectContext.delete(stop)
+        }
     }
 
     private func addItem() {

@@ -89,17 +89,31 @@ struct ContentDetailsView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
 
-            let stops = items.map { $0 }
-            offsets
-                .compactMap { stops[$0] }
-                .forEach(viewContext.delete)
+            var stops = items.map { $0 }
+
+            viewContext.performAndWait {
+
+                // Remove Deleted Items Back to front
+                offsets
+                    .reversed()
+                    .forEach { index in
+                        let stop = stops.remove(at: index)
+                        viewContext.delete(stop)
+                    }
+
+                // Reindex newly positioned items
+                stops
+                    .enumerated()
+                    .forEach { index, stop in
+                    stop.index = Int64(index)
+                }
+            }
 
             trySave()
         }
     }
 
     private func moveItems(source: IndexSet, to destination: Int) {
-
         var stops = items.map { $0 }
         stops.move(fromOffsets: source, toOffset: destination)
         stops.enumerated().forEach { (index, stop) in
