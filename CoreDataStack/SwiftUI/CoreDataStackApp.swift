@@ -11,10 +11,30 @@ import SwiftUI
 struct CoreDataStackApp: App {
     let persistenceController = PersistenceController.shared
 
+    var routeCollectionViewController: RouteCollectionViewController {
+        RouteCollectionViewController(persistenceController.container.viewContext)
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            TabView {
+                ContentView()
+                    .tabItem {
+                        VStack {
+                            Image(systemName: "swift")
+                            Text("SwiftUI")
+                        }
+                    }
+
+                NavigationViewControllerRepresentable(rootViewController: routeCollectionViewController)
+                .tabItem {
+                    VStack {
+                        Image(systemName: "shippingbox")
+                        Text("UIKit")
+                    }
+                }
+            }
+            .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

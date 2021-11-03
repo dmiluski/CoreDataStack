@@ -104,7 +104,11 @@ class StopCollectionViewController: UIViewController {
                         }
 
                     // Merge with parent
-                    try? context.save()
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Dane - error: \(error)")
+                    }
             }
         }
     }

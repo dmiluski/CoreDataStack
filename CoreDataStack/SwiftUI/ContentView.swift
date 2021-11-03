@@ -33,7 +33,7 @@ struct ContentView: View {
                 .onDelete(perform: deleteItems)
             }
             .listStyle(PlainListStyle())
-            .navigationTitle(Text("Routes"))
+            .navigationTitle(Text("SwfitUI Routes"))
             .toolbar {
 
                 // Nav Bar
@@ -45,15 +45,6 @@ struct ContentView: View {
 
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
 
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                    EditButton()
-                }
-
-                // Bottom Toolbar
-                ToolbarItemGroup(placement: .bottomBar) {
-
                     Button(action: {
                         withAnimation {
                             items.forEach(viewContext.delete(_:))
@@ -62,16 +53,10 @@ struct ContentView: View {
                         Image(systemName: "trash")
                     }
 
-                    Spacer()
-
-                    Button(action: {
-                        isPresenting.toggle()
-                    }) {
-                        Label("Present UIKit Variant", systemImage: "square.and.arrow.up")
+                    Button(action: addItem) {
+                        Label("Add Item", systemImage: "plus")
                     }
-                }
-                ToolbarItem(placement: .bottomBar) {
-
+                    EditButton()
                 }
             }
             .sheet(isPresented: $isPresenting) {

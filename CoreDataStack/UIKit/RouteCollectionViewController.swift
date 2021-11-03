@@ -83,6 +83,7 @@ class RouteCollectionViewController: UIViewController {
     init(_ managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
         super.init(nibName: nil, bundle: nil)
+        self.title = "UIKit Routes"
     }
 
     required init?(coder: NSCoder) {
@@ -97,6 +98,13 @@ class RouteCollectionViewController: UIViewController {
         collectionView.dataSource = diffableDataSource
 
 
+        let delete = UIBarButtonItem(
+            systemItem: .trash,
+            primaryAction: UIAction { [unowned self] action in
+                self.deleteAll()
+            }
+        )
+
         let add = UIBarButtonItem(
             title: "Add",
             image: UIImage(systemName: "plus"),
@@ -105,7 +113,11 @@ class RouteCollectionViewController: UIViewController {
             }
         )
 
-        self.navigationItem.rightBarButtonItems = [editButtonItem, add]
+        self.navigationItem.rightBarButtonItems = [
+            editButtonItem,
+            add,
+            delete,
+        ]
 
         do {
             try fetchedResultController.performFetch()
@@ -231,13 +243,13 @@ extension RouteCollectionViewController {
         newItem.displayableName = String(UUID().uuidString.prefix(5))
         newItem.stops = []
         trySave()
+    }
 
-        do {
-            try fetchedResultController.performFetch()
-        } catch {
-            print("Error: \(error)")
-        }
-
+    private func deleteAll() {
+        let request = Route.fetchRequest()
+        let result = try? managedObjectContext.fetch(request)
+        result?.forEach { managedObjectContext.delete($0) }
+        trySave()
     }
 
     private func trySave() {
