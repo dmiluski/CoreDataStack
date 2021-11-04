@@ -147,11 +147,12 @@ extension RouteCollectionViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
 
-        guard let identifier = diffableDataSource.itemIdentifier(for: indexPath),
-              let route = try? managedObjectContext.existingObject(with: identifier) as? Route else {
+        guard let items = fetchedResultController.fetchedObjects,
+              items.indices.contains(indexPath.row) else {
                   return
               }
 
+        let route = items[indexPath.row]
         let vc = StopCollectionViewController(managedObjectContext, route: route)
         navigationController?.pushViewController(vc, animated: true)
     }
