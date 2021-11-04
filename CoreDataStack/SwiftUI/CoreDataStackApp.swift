@@ -6,13 +6,22 @@
 //
 
 import SwiftUI
+import CoreData
 
 @main
 struct CoreDataStackApp: App {
-    let persistenceController = PersistenceController.shared
+
+    /// Coordinates Persistent Store
+    let persistentCoordinator = PersistenceCoordinator()
+
+    // MARK: - Helper Accessors
+
+    var viewContext: NSManagedObjectContext {
+        persistentCoordinator.persistenceController.container.viewContext
+    }
 
     var routeCollectionViewController: RouteCollectionViewController {
-        RouteCollectionViewController(persistenceController.container.viewContext)
+        RouteCollectionViewController(persistentCoordinator.persistenceController.container.viewContext)
     }
 
     var body: some Scene {
@@ -34,7 +43,9 @@ struct CoreDataStackApp: App {
                     }
                 }
             }
-            .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            .environment(\.managedObjectContext, viewContext)
         }
     }
 }
+
+

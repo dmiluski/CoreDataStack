@@ -28,6 +28,7 @@
 		2E5F0770272BA54F00E1671C /* StopCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F076F272BA54F00E1671C /* StopCollectionViewController.swift */; };
 		2E5F0772272BB0AF00E1671C /* NavigationControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0771272BB0AF00E1671C /* NavigationControllerRepresentable.swift */; };
 		2ED16F92273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED16F91273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift */; };
+		2ED16F9927338593000FAE10 /* PersistenceCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED16F9827338593000FAE10 /* PersistenceCoordinator.swift */; };
 		2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF688192728B9E2005DEF20 /* StopCellView.swift */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 		2E5F0771272BB0AF00E1671C /* NavigationControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationControllerRepresentable.swift; sourceTree = "<group>"; };
 		2ED16F8F27330836000FAE10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2ED16F91273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorViewRepresentable.swift; sourceTree = "<group>"; };
+		2ED16F9827338593000FAE10 /* PersistenceCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceCoordinator.swift; sourceTree = "<group>"; };
 		2EF688192728B9E2005DEF20 /* StopCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,6 +133,7 @@
 				2E5F0767272B5A2200E1671C /* UIKit */,
 				2E18739B2728976100360A63 /* Assets.xcassets */,
 				2E1873A02728976100360A63 /* Persistence.swift */,
+				2ED16F9827338593000FAE10 /* PersistenceCoordinator.swift */,
 				2E1873A22728976100360A63 /* CoreDataStack.xcdatamodeld */,
 				2E18739D2728976100360A63 /* Preview Content */,
 			);
@@ -365,6 +368,7 @@
 				2E1873D327289F5000360A63 /* ContentDetailsView.swift in Sources */,
 				2E5F0772272BB0AF00E1671C /* NavigationControllerRepresentable.swift in Sources */,
 				2E5F0766272B589D00E1671C /* SwiftUICollectionViewCell.swift in Sources */,
+				2ED16F9927338593000FAE10 /* PersistenceCoordinator.swift in Sources */,
 				2E5F076A272B5BDD00E1671C /* RouteCell.swift in Sources */,
 				2E1873A12728976100360A63 /* Persistence.swift in Sources */,
 				2E5F0763272B582900E1671C /* UIViewController+.swift in Sources */,

@@ -125,8 +125,7 @@ struct ContentDetailsView: View {
     private func loadRemoteRoutes() {
 
         // TODO: - Perform Async Remote Loading
-        DispatchQueue.global().async {
-
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
 
             // Remove existing stops, replace with updated values
             let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -153,9 +152,6 @@ struct ContentDetailsView: View {
 
             do {
                 try context.save()
-
-                // Sync to disk
-                DispatchQueue.main.async { trySave() }
             } catch {
                 print("Dane - error \(error)")
             }
