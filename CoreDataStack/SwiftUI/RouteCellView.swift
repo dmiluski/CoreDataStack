@@ -9,7 +9,8 @@ import SwiftUI
 
 struct RouteCellView: View {
 
-    let route: Route
+    @ObservedObject
+    var route: Route
 
     var body: some View {
         HStack {

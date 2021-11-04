@@ -16,9 +16,8 @@ struct ContentView: View {
         animation: .default)
     private var items: FetchedResults<Route>
 
-    /// Modal Presentation of UIKit variation of interacting with this data
     @State
-    var isPresenting: Bool = false
+    var isPerformingAsync: Bool = false
 
     var body: some View {
         NavigationView {
@@ -38,8 +37,17 @@ struct ContentView: View {
 
                 // Nav Bar
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: loadRemoteRoutes) {
-                        Image(systemName: "arrow.clockwise")
+
+                    if !isPerformingAsync {
+                        Button(action: loadRemoteRoutes) {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                    } else {
+                        ActivityIndicator(
+                            isAnimating: $isPerformingAsync,
+                            style: .medium,
+                            color: UIColor.tertiaryLabel
+                        )
                     }
                 }
 
@@ -59,11 +67,6 @@ struct ContentView: View {
                     EditButton()
                 }
             }
-            .sheet(isPresented: $isPresenting) {
-                NavigationViewControllerRepresentable(rootViewController: RouteCollectionViewController(viewContext))
-                    .environment(\.managedObjectContext, viewContext)
-                    .ignoresSafeArea()
-            }
         }
     }
 
@@ -71,6 +74,7 @@ struct ContentView: View {
 
     private func loadRemoteRoutes() {
 
+        isPerformingAsync = true
         // TODO: - Perform Async Remote Loading
         DispatchQueue
             .global()
@@ -79,13 +83,23 @@ struct ContentView: View {
                 let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
                 context.parent = viewContext
 
-                guard let lastRoute = items.last else {
-                    return
+                items
+                    // Convert to Child Context Routes
+                    .compactMap { context.object(with: $0.objectID) as? Route }
+                    .forEach { route in
+
+                    // Apply Random Mutation Demonstrating background context merging
+                    //
+                    // Either
+                    // - Delete
+                    // - Prefix Name
+                    if (Bool.random()) {
+                        // Either Delete
+                        context.delete(route)
+                    } else {
+                        route.displayableName = "1" + (route.displayableName ?? "")
+                    }
                 }
-
-                let route = context.object(with: lastRoute.objectID)
-
-                context.delete(route)
 
                 do {
                     try context.save()
@@ -96,6 +110,9 @@ struct ContentView: View {
                     print("Dane - error: \(error)")
                 }
 
+                DispatchQueue.main.async {
+                    isPerformingAsync = false
+                }
             }
     }
 

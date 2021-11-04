@@ -27,6 +27,7 @@
 		2E5F076E272B5D2B00E1671C /* RouteCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F076D272B5D2B00E1671C /* RouteCollectionViewController.swift */; };
 		2E5F0770272BA54F00E1671C /* StopCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F076F272BA54F00E1671C /* StopCollectionViewController.swift */; };
 		2E5F0772272BB0AF00E1671C /* NavigationControllerRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E5F0771272BB0AF00E1671C /* NavigationControllerRepresentable.swift */; };
+		2ED16F92273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED16F91273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift */; };
 		2EF6881A2728B9E2005DEF20 /* StopCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF688192728B9E2005DEF20 /* StopCellView.swift */; };
 /* End PBXBuildFile section */
 
@@ -72,6 +73,7 @@
 		2E5F076F272BA54F00E1671C /* StopCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCollectionViewController.swift; sourceTree = "<group>"; };
 		2E5F0771272BB0AF00E1671C /* NavigationControllerRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationControllerRepresentable.swift; sourceTree = "<group>"; };
 		2ED16F8F27330836000FAE10 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2ED16F91273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorViewRepresentable.swift; sourceTree = "<group>"; };
 		2EF688192728B9E2005DEF20 /* StopCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopCellView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,6 +165,7 @@
 		2E5F075B272B57F400E1671C /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				2ED16F902733729F000FAE10 /* ViewRepresentables */,
 				2E5F0764272B589000E1671C /* Cells */,
 				2E5F075F272B581700E1671C /* Extensions */,
 				2E5F075C272B580100E1671C /* Protocols */,
@@ -217,6 +220,14 @@
 				2E5F0759272A0E6100E1671C /* RouteCellView.swift */,
 			);
 			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		2ED16F902733729F000FAE10 /* ViewRepresentables */ = {
+			isa = PBXGroup;
+			children = (
+				2ED16F91273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift */,
+			);
+			path = ViewRepresentables;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -350,6 +361,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E5F0770272BA54F00E1671C /* StopCollectionViewController.swift in Sources */,
+				2ED16F92273372CF000FAE10 /* ActivityIndicatorViewRepresentable.swift in Sources */,
 				2E1873D327289F5000360A63 /* ContentDetailsView.swift in Sources */,
 				2E5F0772272BB0AF00E1671C /* NavigationControllerRepresentable.swift in Sources */,
 				2E5F0766272B589D00E1671C /* SwiftUICollectionViewCell.swift in Sources */,

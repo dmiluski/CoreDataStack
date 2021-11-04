@@ -8,6 +8,12 @@ class RouteCollectionViewController: UIViewController {
 
     let managedObjectContext: NSManagedObjectContext
 
+    fileprivate var isPerformingAsync: Bool = false {
+        didSet {
+            setLeftBarButtons(loading: isPerformingAsync)
+        }
+    }
+
     // MARK: - UI
 
     lazy var collectionView: UICollectionView = {
@@ -16,6 +22,20 @@ class RouteCollectionViewController: UIViewController {
             collectionViewLayout: createLayout()
         )
         return collectionView
+    }()
+
+    let activityIndicator = UIActivityIndicatorView()
+    lazy var refreshBarButton: UIBarButtonItem = {
+        UIBarButtonItem(
+            title: "Add",
+            image: UIImage(systemName: "arrow.clockwise"),
+            primaryAction: UIAction { [unowned self] action in
+                self.loadRemoteRoutes()
+            }
+        )
+    }()
+    lazy var activityBarButton: UIBarButtonItem = {
+        UIBarButtonItem(customView: activityIndicator)
     }()
 
 
@@ -119,10 +139,22 @@ class RouteCollectionViewController: UIViewController {
             delete,
         ]
 
+        setLeftBarButtons(loading: false)
+
         do {
             try fetchedResultController.performFetch()
         } catch {
             print("Error: \(error)")
+        }
+    }
+
+    func setLeftBarButtons(loading: Bool) {
+        if loading {
+            self.navigationItem.leftBarButtonItem = activityBarButton
+            activityIndicator.startAnimating()
+        } else {
+            self.navigationItem.leftBarButtonItem = refreshBarButton
+            activityIndicator.stopAnimating()
         }
     }
 
@@ -260,6 +292,50 @@ extension RouteCollectionViewController {
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
+    }
+
+    private func loadRemoteRoutes() {
+
+
+        guard let routes = fetchedResultController.fetchedObjects else {
+            return
+        }
+
+        isPerformingAsync = true
+        // TODO: - Perform Async Remote Loading
+        DispatchQueue
+            .global()
+            .asyncAfter(deadline: .now() + 2) { [managedObjectContext, weak self] in
+
+                let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+                context.parent = managedObjectContext
+
+                routes
+                    // Map to child context
+                    .compactMap { context.object(with: $0.objectID) as? Route }
+
+                    // Mutate
+                    .forEach { route in
+
+                        // Apply Random Mutation Demonstrating background context merging
+                        //
+                        // Either
+                        // - Delete
+                        // - Prefix Name
+                        if (Bool.random()) {
+                            // Either Delete
+                            context.delete(route)
+                        } else {
+                            route.displayableName = "1" + (route.displayableName ?? "")
+                        }
+                    }
+
+                try? context.save()
+
+                DispatchQueue.main.async {
+                    self?.isPerformingAsync = false
+                }
+            }
     }
 
 }
